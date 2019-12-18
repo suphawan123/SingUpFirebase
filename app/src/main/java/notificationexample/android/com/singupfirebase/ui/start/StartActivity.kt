@@ -1,0 +1,37 @@
+package notificationexample.android.com.singupfirebase.ui.start
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import kotlinx.android.synthetic.main.activity_start.*
+import notificationexample.android.com.singupfirebase.R
+import notificationexample.android.com.singupfirebase.ui.login.LoginActivity
+import notificationexample.android.com.singupfirebase.ui.register.RegisterActivity
+
+
+class StartActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_start)
+
+
+        login.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                startActivity(Intent(this@StartActivity,
+                    LoginActivity::class.java))
+            }
+
+        })
+
+        register.setOnClickListener(object : View.OnClickListener{
+            override fun onClick(v: View?) {
+                startActivity(Intent(this@StartActivity,
+                    RegisterActivity::class.java))
+            }
+
+        })
+    }
+}
