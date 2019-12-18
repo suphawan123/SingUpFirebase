@@ -6,3 +6,5 @@ class LoginView {
         fun onError(error:String)
     }
 }
+
+

@@ -45,6 +45,7 @@ class RegisterPersenter(private val view: RegisterView.View) {
                             .addOnCompleteListener(object : OnCompleteListener<Void> {
                                 override fun onComplete(p0: Task<Void>) {
                                     view.onSuccess(p0.isSuccessful)
+//                                    dsdfghdtyui
 //
                                 }
 
