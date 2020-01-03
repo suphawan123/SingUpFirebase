@@ -16,6 +16,7 @@ import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.activity_login.*
 import notificationexample.android.com.singupfirebase.R
 import notificationexample.android.com.singupfirebase.ui.main.MainActivity
+import notificationexample.android.com.singupfirebase.ui.resetpassword.ResetPasswordActivity
 
 class LoginActivity : AppCompatActivity(), LoginView.View {
 
@@ -27,20 +28,31 @@ class LoginActivity : AppCompatActivity(), LoginView.View {
         setContentView(R.layout.activity_login)
         persenter = LoginPersenter(this)
 
-        setToolbar()
+//        setToolbar()
+        setOnClickForgotPassword()
+
         setOnClick()
 
     }
 
+    private fun setOnClickForgotPassword() {
+        forgot_password.setOnClickListener(object :View.OnClickListener{
+            override fun onClick(v: View?) {
+                startActivity(Intent(this@LoginActivity, ResetPasswordActivity::class.java))
+            }
 
-
-    private fun setToolbar() {
-        var toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
-        supportActionBar!!.setTitle("Login")
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        })
 
     }
+
+
+//    private fun setToolbar() {
+//        var toolbar: Toolbar = findViewById(R.id.toolbar)
+//        setSupportActionBar(toolbar)
+//        supportActionBar!!.setTitle("Login")
+//        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+//
+//    }
 
     private fun setOnClick() {
         btn_login.setOnClickListener(object : View.OnClickListener {

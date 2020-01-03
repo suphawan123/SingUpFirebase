@@ -39,7 +39,9 @@ class RegisterPersenter(private val view: RegisterView.View) {
                             User(
                                 userid,
                                 username,
-                                "default"
+                                "default",
+                            "offline",
+                                username.toLowerCase()
                             )
                         )
                             .addOnCompleteListener(object : OnCompleteListener<Void> {

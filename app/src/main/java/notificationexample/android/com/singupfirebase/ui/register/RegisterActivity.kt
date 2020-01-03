@@ -5,17 +5,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.rengwuxian.materialedittext.MaterialEditText
 import kotlinx.android.synthetic.main.activity_register.*
 import notificationexample.android.com.singupfirebase.R
 import notificationexample.android.com.singupfirebase.ui.main.MainActivity
@@ -30,7 +21,7 @@ class RegisterActivity : AppCompatActivity(), RegisterView.View {
         setContentView(R.layout.activity_register)
         persenter = RegisterPersenter(this)
 
-        onToobar()
+//        onToobar()
         onClick()
     }
 
