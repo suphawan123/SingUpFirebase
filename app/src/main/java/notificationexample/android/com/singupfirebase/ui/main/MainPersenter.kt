@@ -11,14 +11,14 @@ import notificationexample.android.com.singupfirebase.model.User
 
 class MainPersenter (private val view: MainView.View){
 
-    lateinit var firebaseUser: FirebaseUser
-    lateinit var reference: DatabaseReference
-    public lateinit var user: User
+     var firebaseUser: FirebaseUser? = null
+     var reference: DatabaseReference
+      var user: User? = null
 
 
     init {
         firebaseUser = FirebaseAuth.getInstance().currentUser!!
-        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.uid)
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser!!.uid)
     }
 
 
@@ -30,9 +30,7 @@ class MainPersenter (private val view: MainView.View){
             override fun onDataChange(p0: DataSnapshot) {
 
                 user = p0.getValue(User::class.java)!!
-                view.onSuccess(user)
-//
-
+                view.onSuccess(user!!)
             }
             override fun onCancelled(p0: DatabaseError) {
                 view.onError(p0.message)

@@ -24,13 +24,6 @@
         android:background="@drawable/background_button"
         android:textColor="#fff"
         android:text="login"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/register"
-        android:background="@drawable/background_button"
-        android:textColor="#fff"
-        android:layout_marginTop="10dp"
-        android:text="register"/>
+
 
 </LinearLayout>

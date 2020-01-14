@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ import notificationexample.android.com.singupfirebase.listener.RecyclerViewCallB
 import notificationexample.android.com.singupfirebase.model.Chatlist
 import notificationexample.android.com.singupfirebase.model.User
 import notificationexample.android.com.singupfirebase.R
+import notificationexample.android.com.singupfirebase.model.Chat
 import notificationexample.android.com.singupfirebase.notifications.Token
 import notificationexample.android.com.singupfirebase.ui.message.MessageActivity
 
@@ -43,6 +45,8 @@ class ChatsFragment : Fragment() {
     // var usersList: MutableList<String?>? = null
     private var usersList = arrayListOf<Chatlist>()
 
+    lateinit var theLastMessage: String
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,8 +62,6 @@ class ChatsFragment : Fragment() {
 //        fuser = FirebaseAuth.getInstance().currentUser
 //
 //        setUserList()
-
-
 
 
         return view
@@ -87,14 +89,23 @@ class ChatsFragment : Fragment() {
 
     ///กดจาก userchat แล้วแสดงข้อความ
     private fun onEvent() {
-        userAdapter.setOnClickUser(object : RecyclerViewCallBack {
-            override fun onClickItem(position: Int) {
-                val intent = Intent(context!!, MessageActivity::class.java)
-                intent.putExtra("userid", mUsers[position].id)
-                startActivity(intent)
-            }
+//        userAdapter.setOnClickUser(object : RecyclerViewCallBack {
+//            override fun onClickItem(position: Int) {
+//                val intent = Intent(context!!, MessageActivity::class.java)
+//                intent.putExtra("userid", mUsers[position].id)
+//                startActivity(intent)
+//            }
+//
+//        })
 
-        })
+        userAdapter.setOnClickUser {
+            val intent = Intent(context!!, MessageActivity::class.java)
+            intent.putExtra("userid", mUsers[it].id)
+            startActivity(intent)
+        }
+
+
+
     }
 
 
@@ -145,12 +156,47 @@ class ChatsFragment : Fragment() {
                 userAdapter.ischat = true
 //                recyclerView.setAdapter(userAdapter)
                 userAdapter.notifyDataSetChanged()
+
+                userAdapter.setlastMessage { userid, last_msg ->
+                    lastMessage(userid,last_msg)
+                }
             }
 
             override fun onCancelled(p0: DatabaseError) {
 
             }
 
+
+        })
+    }
+
+    private fun lastMessage(userid: String, last_msg: TextView) {
+        theLastMessage = "default"
+        var firebaseUser: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
+        var reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats")
+
+        reference.addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+
+            override fun onDataChange(p0: DataSnapshot) {
+                for (snapshot:DataSnapshot in p0.children){
+                    var chat: Chat = snapshot.getValue(Chat::class.java)!!
+                    if (chat.receiver == (firebaseUser.uid) && chat.sender == (userid) ||
+                        chat.receiver == (userid) && chat.sender == (firebaseUser.uid)){
+                        theLastMessage = chat.message
+                    }
+                }
+
+                when (theLastMessage) {
+                    "default" -> last_msg.setText("No Message")
+                    else -> last_msg.setText(theLastMessage)
+                }
+                theLastMessage = "default"
+
+
+            }
 
         })
     }
@@ -163,6 +209,5 @@ class ChatsFragment : Fragment() {
 
         updateToken(FirebaseInstanceId.getInstance().token!!)
     }
-
 }
 

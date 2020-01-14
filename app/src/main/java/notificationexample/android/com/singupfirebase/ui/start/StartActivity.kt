@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Button
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_start.*
 import notificationexample.android.com.singupfirebase.R
 import notificationexample.android.com.singupfirebase.ui.login.LoginActivity

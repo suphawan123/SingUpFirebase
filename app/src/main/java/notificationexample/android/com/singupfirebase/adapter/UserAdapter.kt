@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.Glide.init
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -24,30 +23,42 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
     private var mCallBack: RecyclerViewCallBack? = null
     var ischat: Boolean? = null
 
+    lateinit var callBack: (Int) -> Unit
+    lateinit var lastCallback: (String,TextView) -> Unit
+
     lateinit var theLastMessage: String
 
-    fun setOnClickUser(listener: RecyclerViewCallBack) {
-        this.mCallBack = listener
+//    fun setOnClickUser(listener: RecyclerViewCallBack) {
+//        this.mCallBack = listener
+//
+//    }
 
+    fun setOnClickUser(listener: (position:Int) -> Unit) {
+        this.callBack = listener
+    }
+
+    fun setlastMessage(listener: (userid: String, last_msg: TextView) -> Unit){
+        this.lastCallback = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         var view: View =
             LayoutInflater.from(parent.context).inflate(R.layout.user_item, parent, false)
-        return UserAdapter.ViewHolder(view)
+        return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         var user: User = mUsers.get(position)
         holder.username.text = user.username
-
+//        holder.username.setText(user.username)
         if (user.imageURL == "default") {
             holder.profile_image.setImageResource(R.mipmap.ic_launcher)
         } else {
             Glide.with(holder.itemView.context).load(user.imageURL).into(holder.profile_image)
         }
         if (ischat!!){
-            lastMessage(user.id, holder.last_msg)
+            lastCallback.invoke(user.id, holder.last_msg)
+//            lastMessage(user.id, holder.last_msg)
         }else{
             holder.last_msg.setVisibility(View.GONE)
         }
@@ -65,7 +76,8 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
             holder.img_off.setVisibility(View.GONE)
         }
         holder.itemView.setOnClickListener {
-            mCallBack!!.onClickItem(position)
+//            mCallBack!!.onClickItem(position)
+            callBack.invoke(position)
 
         }
 
@@ -92,35 +104,6 @@ class UserAdapter : RecyclerView.Adapter<UserAdapter.ViewHolder>() {
 
     }
 
-    private fun lastMessage(userid: String, last_msg: TextView) {
-        theLastMessage = "default"
-        var firebaseUser: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
-        var reference: DatabaseReference = FirebaseDatabase.getInstance().getReference("Chats")
 
-        reference.addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-            override fun onDataChange(p0: DataSnapshot) {
-                for (snapshot:DataSnapshot in p0.children){
-                    var chat:Chat = snapshot.getValue(Chat::class.java)!!
-                    if (chat.receiver == (firebaseUser.uid) && chat.sender == (userid) ||
-                            chat.receiver == (userid) && chat.sender == (firebaseUser.uid)){
-                        theLastMessage = chat.message
-                    }
-                }
-
-                when (theLastMessage) {
-                    "default" -> last_msg.setText("No Message")
-                    else -> last_msg.setText(theLastMessage)
-                }
-                theLastMessage = "default"
-
-
-            }
-
-        })
-    }
 
 }

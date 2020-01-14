@@ -46,8 +46,8 @@ class UsersFragment : Fragment(), UsersView.View {
         persenter = UsersPersenter(this)
         persenter.readUsers()
 
-        search_user = view.findViewById(R.id.search_user)
-        setSearch()
+//        search_user = view.findViewById(R.id.search_user)
+//        setSearch()
 
         setUpRecyclerView(view)
         onEvent()
@@ -56,57 +56,57 @@ class UsersFragment : Fragment(), UsersView.View {
         return view
     }
 
-    private fun setSearch() {
-        search_user.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                searchUsers(s.toString().toLowerCase())
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
-        })
-    }
-
-
-    private fun searchUsers(s: String) {
-        val fuser: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
-        val query: Query =
-            FirebaseDatabase.getInstance().getReference("Users").orderByChild("search")
-                .startAt(s)
-                .endAt(s + "\uf8ff")
-
-        query.addValueEventListener(object : ValueEventListener {
-
-            override fun onDataChange(p0: DataSnapshot) {
-
-                mUsers.clear()
-                for (snapshot: DataSnapshot in p0.children) {
-                    val user: User = snapshot.getValue(User::class.java)!!
-                    assert(fuser != null)
-                    if (user.id != (fuser.uid)) {
-                        mUsers.add(user)
-                    }
-                }
-//                    userAdapter = context.let { UserAdapter(it, mUsers,false) }
-                userAdapter.mUsers = mUsers
-                userAdapter.ischat = true
-                userAdapter.notifyDataSetChanged()
+//    private fun setSearch() {
+//        search_user.addTextChangedListener(object : TextWatcher {
+//            override fun afterTextChanged(s: Editable?) {
+//            }
+//
+//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+//                searchUsers(s.toString().toLowerCase())
+//            }
+//
+//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+//
+//            }
+//
+//        })
+//    }
 
 
-            }
-
-            override fun onCancelled(p0: DatabaseError) {
-
-            }
-
-
-        })
-    }
+//    private fun searchUsers(s: String) {
+//        val fuser: FirebaseUser = FirebaseAuth.getInstance().currentUser!!
+//        val query: Query =
+//            FirebaseDatabase.getInstance().getReference("Users").orderByChild("search")
+//                .startAt(s)
+//                .endAt(s + "\uf8ff")
+//
+//        query.addValueEventListener(object : ValueEventListener {
+//
+//            override fun onDataChange(p0: DataSnapshot) {
+//
+//                mUsers.clear()
+//                for (snapshot: DataSnapshot in p0.children) {
+//                    val user: User = snapshot.getValue(User::class.java)!!
+//                    assert(fuser != null)
+//                    if (user.id != (fuser.uid)) {
+//                        mUsers.add(user)
+//                    }
+//                }
+////                    userAdapter = context.let { UserAdapter(it, mUsers,false) }
+//                userAdapter.mUsers = mUsers
+//                userAdapter.ischat = true
+//                userAdapter.notifyDataSetChanged()
+//
+//
+//            }
+//
+//            override fun onCancelled(p0: DatabaseError) {
+//
+//            }
+//
+//
+//        })
+//    }
 
     private fun setUpRecyclerView(view: View) {
 
@@ -116,14 +116,19 @@ class UsersFragment : Fragment(), UsersView.View {
     }
 
     private fun onEvent() {
-        userAdapter.setOnClickUser(object : RecyclerViewCallBack {
-            override fun onClickItem(position: Int) {
-                val intent = Intent(context!!, MessageActivity::class.java)
-                intent.putExtra("userid", mUsers[position].id)
-                startActivity(intent)
-            }
-
-        })
+//        userAdapter.setOnClickUser(object : RecyclerViewCallBack {
+//            override fun onClickItem(position: Int) {
+//                val intent = Intent(context!!, MessageActivity::class.java)
+//                intent.putExtra("userid", mUsers[position].id)
+//                startActivity(intent)
+//            }
+//
+//        })
+        userAdapter.setOnClickUser {
+            val intent = Intent(context!!, MessageActivity::class.java)
+            intent.putExtra("userid", mUsers[it].id)
+            startActivity(intent)
+        }
     }
 
     override fun dataListUser(list: List<User>) {

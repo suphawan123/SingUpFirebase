@@ -2,6 +2,7 @@ package notificationexample.android.com.singupfirebase.fragments.profile
 
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -22,10 +23,15 @@ import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
+import com.ligl.android.widget.iosdialog.IOSDialog
 import kotlinx.android.synthetic.main.fragment_profile.view.*
 
 import notificationexample.android.com.singupfirebase.R
+import notificationexample.android.com.singupfirebase.SplashScreen
 import notificationexample.android.com.singupfirebase.model.User
+import notificationexample.android.com.singupfirebase.restartApp
+import notificationexample.android.com.singupfirebase.ui.login.LoginActivity
+import notificationexample.android.com.singupfirebase.ui.main.MainActivity
 import java.io.IOException
 import java.util.*
 
@@ -39,12 +45,16 @@ class ProfileFragment : Fragment() {
 
 
     lateinit var storageReference: StorageReference
-    var IMAGE_REQUEST:Int = 1
+    var IMAGE_REQUEST: Int = 1
     lateinit var imageUri: Uri
     lateinit var uploadTask: UploadTask
     private var part: String = ""
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
         fragment_profile = inflater.inflate(R.layout.fragment_profile, container, false)
 
@@ -63,12 +73,24 @@ class ProfileFragment : Fragment() {
         view.profile_image_upload.setOnClickListener {
             openImage()
         }
+
+        view.profilelogout.setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
+
+            IOSDialog.Builder(context)
+                .setTitle("แจ้งเตือน")
+                .setMessage("คุณต้องการออกจากระบบ ?")
+                .setPositiveButton("ยืนยัน", DialogInterface.OnClickListener { _, _ ->
+                    restartApp()
+                })
+                .show()
+        }
     }
 
     private fun openImage() {
         var intent: Intent = Intent()
         intent.setType("image/*")
-        intent.setAction(Intent.ACTION_GET_CONTENT)
+        intent.action = Intent.ACTION_GET_CONTENT
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), IMAGE_REQUEST)
     }
 
@@ -79,10 +101,15 @@ class ProfileFragment : Fragment() {
             override fun onDataChange(p0: DataSnapshot) {
                 var user: User = p0.getValue(User::class.java)!!
                 fragment_profile!!.username.text = user.username
-                if (user.imageURL == "default"){
+                if (user.imageURL == "default") {
                     fragment_profile!!.profile_image_upload.setImageResource(R.mipmap.ic_launcher)
-                }else{
-                    Glide.with(context!!).load(user.imageURL).into(fragment_profile!!.profile_image_upload)
+                } else {
+                    if (context != null) {
+                        Glide
+                            .with(context!!)
+                            .load(user.imageURL)
+                            .into(fragment_profile!!.profile_image_upload)
+                    }
                 }
             }
 
@@ -92,7 +119,7 @@ class ProfileFragment : Fragment() {
         })
     }
 
-    private fun upDateProfile(){
+    private fun upDateProfile() {
         reference.setValue(
             User(
                 fuser!!.uid,
@@ -109,7 +136,7 @@ class ProfileFragment : Fragment() {
             })
     }
 
-    private fun uploadImage(){
+    private fun uploadImage() {
 //        val pd:ProgressDialog = ProgressDialog(context!!)
 //        pd.setMessage("Uploading")
 //        pd.show()
@@ -151,7 +178,11 @@ class ProfileFragment : Fragment() {
     }
 
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
         if (requestCode == IMAGE_REQUEST && resultCode == Activity.RESULT_OK
             && data != null && data.getData() != null
         ) {
@@ -159,7 +190,10 @@ class ProfileFragment : Fragment() {
             Toast.makeText(context, imageUri.toString(), Toast.LENGTH_SHORT).show()
             try {
                 var bitmap: Bitmap =
-                    MediaStore.Images.Media.getBitmap(activity!!.getContentResolver(), imageUri)
+                    MediaStore.Images.Media.getBitmap(
+                        activity!!.contentResolver,
+                        imageUri
+                    )
                 fragment_profile!!.profile_image_upload.setImageBitmap(bitmap)
                 uploadImage()
             } catch (e: IOException) {
@@ -167,6 +201,5 @@ class ProfileFragment : Fragment() {
             }
         }
     }
-
 
 }
